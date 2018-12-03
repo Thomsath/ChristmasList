@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div id="container-form-addGift">
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+            {{ form_end(form) }}
+        </div>
+
+      <ul id="self-giftlist">
+            {% for gift in gifts %}
+                <li>
+                    <h2 class="gift-name">{{  gift.name }}</h2>
+                    <p>{{  gift.description }}</p>
+                    <p>Lien vers le cadeau : <a href"{{ gift.source }}">{{ gift.source }}</a></p>
+                    {% if gift.updatedAt is not null %}
+                        <p>Mis à jour le: {{ gift.updatedAt|date("d/m/Y") }}</p>
+                    {% else %}
+                        <p>Créer le : {{ gift.createdAt|date("d/m/Y") }}
+                    {% endif %}
+                    <a href="{{ path('editMyGift', {'id' : gift.id}) }}" class="aEditMyGift" data-gift-id="{{ gift.id }}"><i class="fas fa-pencil-alt"></i></a></p>
+                <div class="editMyGift">
+
+                </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <style>
+        a {
+            text-decoration: none;
+        }
+        /* index */
+        .editMyGift {
+            display: none;
+        }
+        #container-form-addGift {
+            grid-area: t-content;
+            text-align: center;
+            }
+        .container {
+            display: grid;
+            grid-template-areas: "t-left t-content t-content t-content t-content t-right"
+                                 "m-left m-content m-content m-content m-content m-right";
+        }
+
+        #self-giftlist{
+            grid-area: m-content;
+            background-color: red;
+        }
+        * {
+            list-style: none;
+            font-family: 'museo-sans', sans-serif;
+        }
+    </style>
+{% block javascripts %}
+    <script>
+        jQuery(document).ready( function() {
+            $('.aEditMyGift').click(function(e) {
+                e.preventDefault();
+                const giftId = this.dataset.giftId;
+                $.ajax({
+
+                    type: 'POST',
+                    url: "{{ path('homepage') }}",
+                    dataType: "json",
+                    data: {
+                        'id' : giftId
+                    },
+                    async: true,
+                    success: function(data) {
+                        console.log(data);
+                    }
+
+                });
+                e.stopImmediatePropagation();
+                return false;
+            });
+        });
+    </script>
+{% endblock %}
+{% endblock %}
+

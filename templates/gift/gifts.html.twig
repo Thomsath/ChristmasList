@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    {% for gift in gifts %}
+        <hr>
+        {{  gift.name }}
+        {{  gift.description }}
+        {{  gift.username }}
+        {% if gift.status == 0 %}
+            <p>Cadeau pas encore acheté</p>
+        {% else %}
+            <p>Cadeau déjà acheté</p>
+        {%  endif %}
+        <p>ok</p>
+    {% endfor %}
+{% endblock %}
