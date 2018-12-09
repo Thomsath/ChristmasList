@@ -21,40 +21,16 @@ class GiftController extends AbstractController
 
             return $this->redirectToRoute('connexion');
         }
+
+        // Edition d'un cadeau
         if($request->request->get('id')) {
             $id = $request->request->get('id');
             $gift = $this->getDoctrine()
                 ->getRepository(Gift::class)
                 ->findOneById($id);
             if($gift !== null) {
-                $form = $this->createForm(GiftType::class, $gift, [
-                        'attr' => ['class' => 'form-addGift'],
-                        'data' => [
-                            'editing' => true,
-                            'name' => $gift->getName(),
-                            'description' => $gift->getDescription(),
-                            'source' => $gift->getSource(),
-                            'gift' => $gift
-                        ]
-                    ]
-                );
-                $form->handleRequest($request);
-
-//                if ($form->isSubmitted() && $form->isValid()) {
-//                    $gift = $form->getData();
-//                    $giftObj = $form->getData()['gift'];
-//                    $giftObj->setName($gift['name']);
-//                    $giftObj->setDescription($gift['description']);
-//                    $giftObj->setSource($gift['source']);
-//                    $entityManager = $this->getDoctrine()->getManager();
-//                    $entityManager->persist($giftObj);
-//                    $entityManager->flush();
-//                    return $this->redirectToRoute('homepage');
-//                }
-//            } else {
-//                return $this->redirectToRoute('homepage');
+                return new JsonResponse(['id' => $gift->getId(), 'name' => $gift->getName(), 'description' => $gift->getDescription(), 'source' => $gift->getSource()]);
            }
-            return new JsonResponse($form->createView());
         }
         $gift = new Gift();
         $form = $this->createForm(GiftType::class, $gift, [
@@ -98,7 +74,6 @@ class GiftController extends AbstractController
             'gifts' => $gifts
         ));
     }
-
     /**
      * @Route("/gifts", name="gifts")
      */
@@ -113,38 +88,71 @@ class GiftController extends AbstractController
         ]);
     }
 
+//    /**
+//     * @Route("/edit/{id}", name="editMyGift")
+//     */
+//    public function editGift($id, Request $request)
+//    {
+//        $gift = $this->getDoctrine()
+//            ->getRepository(Gift::class)
+//            ->findOneById($id);
+//        if($gift !== null) {
+//            $form = $this->createForm(GiftType::class, $gift, [
+//                    'attr' => ['class' => 'form-addGift'],
+//                    'data' => [
+//                        'editing' => true,
+//                        'name' => $gift->getName(),
+//                        'description' => $gift->getDescription(),
+//                        'source' => $gift->getSource(),
+//                        'gift' => $gift
+//                    ]
+//                ]
+//            );
+//            $form->handleRequest($request);
+//
+//            if ($form->isSubmitted() && $form->isValid()) {
+//                $gift = $form->getData();
+//                $giftObj = $form->getData()['gift'];
+//                $giftObj->setName($gift['name']);
+//                $giftObj->setDescription($gift['description']);
+//                $giftObj->setSource($gift['source']);
+//                $entityManager = $this->getDoctrine()->getManager();
+//                $entityManager->persist($giftObj);
+//                $entityManager->flush();
+//                return $this->redirectToRoute('homepage');
+//            }
+//        } else {
+//            return $this->redirectToRoute('homepage');
+//        }
+//
+//        return $this->render('gift/edit.html.twig', [
+//            'controller_name' => 'GiftController',
+//            'form' => $form->createView()
+//        ]);
+//    }
     /**
      * @Route("/edit/{id}", name="editMyGift")
      */
-    public function editGift($id, Request $request)
+    public function editGift($id)
     {
-        $gift = $this->getDoctrine()
-            ->getRepository(Gift::class)
-            ->findOneById($id);
-        if($gift !== null) {
-            $form = $this->createForm(GiftType::class, $gift, [
-                    'attr' => ['class' => 'form-addGift'],
-                    'data' => [
-                        'editing' => true,
-                        'name' => $gift->getName(),
-                        'description' => $gift->getDescription(),
-                        'source' => $gift->getSource(),
-                        'gift' => $gift
-                    ]
-                ]
-            );
-            $form->handleRequest($request);
+        if(isset($_GET['gift-name']) && isset($_GET['gift-source']) && isset($_GET['gift-description']) && isset($id)) {
+            $name = htmlspecialchars($_GET['gift-name']);
+            $source = htmlspecialchars($_GET['gift-source']);
+            $description = htmlspecialchars($_GET['gift-description']);
 
-            if ($form->isSubmitted() && $form->isValid()) {
-                $gift = $form->getData();
-                $giftObj = $form->getData()['gift'];
-                $giftObj->setName($gift['name']);
-                $giftObj->setDescription($gift['description']);
-                $giftObj->setSource($gift['source']);
+            $giftToEdit = $this->getDoctrine()
+                ->getRepository(Gift::class)
+                ->findOneById($id);
+            if ($giftToEdit !== null) {
+                $giftToEdit->setName($name);
+                $giftToEdit->setDescription($description);
+                $giftToEdit->setSource($source);
+                $giftToEdit->setUpdatedAt(new \DateTime('now'));
                 $entityManager = $this->getDoctrine()->getManager();
-                $entityManager->persist($giftObj);
+                $entityManager->persist($giftToEdit);
                 $entityManager->flush();
                 return $this->redirectToRoute('homepage');
+
             }
         } else {
             return $this->redirectToRoute('homepage');
@@ -152,9 +160,16 @@ class GiftController extends AbstractController
 
         return $this->render('gift/edit.html.twig', [
             'controller_name' => 'GiftController',
-            'form' => $form->createView()
         ]);
     }
-
+    /**
+     * @Route("/delete/{id}", name="deleteMyGift")
+     */
+    public function deleteGift($id)
+    {
+        return $this->render('gift/edit.html.twig', [
+            'controller_name' => 'GiftController',
+        ]);
+    }
 
 }

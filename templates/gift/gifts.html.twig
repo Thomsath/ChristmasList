@@ -3,6 +3,7 @@
 {% block title %}{% endblock %}
 
 {% block body %}
+    {% include 'menu.html.twig' %}
     {% for gift in gifts %}
         <hr>
         {{  gift.name }}

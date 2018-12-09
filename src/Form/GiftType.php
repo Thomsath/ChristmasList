@@ -21,16 +21,16 @@ class GiftType extends AbstractType
         if(array_key_exists('editing', $options['data']) ) {
 
             $builder
-                ->add('name', TextType::class, array('data' => $options['data']['name']))
-                ->add('description', TextType::class, array('data' => $options['data']['description']))
-                ->add('source', TextType::class, array('data' => $options['data']['source']))
-                ->add('save', SubmitType::class, array('label' => 'Editer le cadeau'));
+                ->add('name', TextType::class, array('data' => $options['data']['name'], 'attr' => array('placeholder' => 'Nom du cadeau'), 'label' => false))
+                ->add('description', TextType::class, array('data' => $options['data']['description'], 'attr' => array('placeholder' => 'Description du cadeau (optionnel)'), 'label' => false))
+                ->add('source', TextType::class, array('data' => $options['data']['source'], 'attr' => array('placeholder' => 'Lien vers le cadeau (optionnel)'), 'label' => false))
+                ->add('save', SubmitType::class, array('label' => 'Envoyer'));
         } else {
             $builder
-                ->add('name', TextType::class)
-                ->add('description', TextType::class)
-                ->add('source', TextType::class)
-                ->add('save', SubmitType::class, array('label' => 'Editer le cadeau'));
+                ->add('name', TextType::class, array('attr' => array('placeholder' => 'Nom du cadeau'), 'label' => false))
+                ->add('description', TextType::class, array('attr' => array('placeholder' => 'Description du cadeau (optionnel)'), 'label' => false))
+                ->add('source', TextType::class, array('attr' => array('placeholder' => 'Lien vers le cadeau (optionnel)'), 'label' => false))
+                ->add('save', SubmitType::class, array('label' => 'Envoyer'));
         }
 
     }

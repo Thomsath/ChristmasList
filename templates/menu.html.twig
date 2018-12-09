@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+<div class="topnav" id="myTopnav">
+    <a href="{{ path('homepage') }}" class="active"><i class="fas fa-home"></i></a>
+    <a href="{{ path('gifts') }}">Liste de cadeaux</a>
+    <a href="javascript:void(0);" class="icon" onclick="responsiveMenu()">
+        <i class="fa fa-bars"></i>
+    </a>
+</div>
+{% endblock %}
